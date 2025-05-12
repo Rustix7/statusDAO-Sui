@@ -1,0 +1,68 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Website {
+  id       String          @id @default(uuid())
+  url      String
+  userId   String
+  status   WebsiteStatus[]
+  disabled Boolean         @default(false)
+  notifyByEmail Boolean   @default(false)
+  notifyEmail   String?     
+  notifyByPhone Boolean    @default(false)
+  notifyPhone   String?      
+}
+
+model Node {
+  id             String          @id @default(uuid())
+  ip             String
+  location       String
+  pubKey         String          @unique
+  status         WebsiteStatus[]
+  pendingPayouts Int             @default(0)
+}
+
+model WebsiteStatus {
+  id        String   @id @default(uuid())
+  websiteId String
+  nodeId    String
+  timestamp DateTime @default(now())
+  latency   Int
+  status    Status
+  website   Website  @relation(fields: [websiteId], references: [id])
+  node      Node     @relation(fields: [nodeId], references: [id])
+}
+
+model Subscriptions {
+  id              String      @id @default(uuid())
+  price           Int
+  duration        Int
+  maxSitesAllowed Int
+  purchases       Purchases[]
+}
+
+model Purchases {
+  id             String        @id @default(uuid())
+  subscriptionId String
+  subscription   Subscriptions @relation(fields: [subscriptionId], references: [id])
+  userId         String
+  time           DateTime      @default(now())
+  transactionHash String      
+}
+
+enum Status {
+  Good
+  Bad
+}
