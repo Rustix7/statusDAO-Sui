@@ -37,10 +37,12 @@ const Pricing = () => {
         {
             id : `0`,
             name: "Basic",
-            price: `${(Number(data?.data?.content.fields.subscriptions[0].fields.price) / (10 ** 8)).toFixed(2)}`,
+             //@ts-ignore
+            price: `${(Number(data?.data?.content!.fields.subscriptions[0].fields.price) / (10 ** 8)).toFixed(2)}`,
             period: "per month",
             description: "Perfect for personal websites and small projects",
             features: [
+                 //@ts-ignore
                 `Monitor up to ${data?.data?.content.fields.subscriptions[0]?.fields.maxSitesAllowed} websites`,
                 "Checks every 60 seconds",
                 "10 geographic regions",
@@ -51,11 +53,13 @@ const Pricing = () => {
         {
             id : `1`,
             name: "Pro",
+            //@ts-ignore
             price: `${(Number(data?.data?.content.fields.subscriptions[1]?.fields.price) / (10 ** 8)).toFixed(2)}`,
             period: "per month",
             description: "Ideal for businesses with multiple websites",
             popular: true,
             features: [
+                 //@ts-ignore
                 `Monitor up to ${data?.data?.content.fields.subscriptions[1]?.fields.maxSitesAllowed} websites`,
                 "Checks every 30 seconds",
                 "7 geographic regions",
@@ -67,10 +71,12 @@ const Pricing = () => {
         {
             id : `2`,
             name: "Enterprise",
+             //@ts-ignore
             price: `${(Number(data?.data?.content.fields.subscriptions[2]?.fields.price) / (10 ** 8)).toFixed(2)}`,
             period: "per month",
             description: "For large organizations with critical websites",
             features: [
+                 //@ts-ignore
                 `Monitor up to ${data?.data?.content.fields.subscriptions[2]?.fields.maxSitesAllowed} websites`,
                 "Checks every 15 seconds",
                 "12 geographic regions",

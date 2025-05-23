@@ -5,9 +5,9 @@ import axios from "axios";
 import { useAuth } from "@clerk/nextjs";
 
 const WebsiteDashboard = () => {
-  const [websites, setWebsites] = useState([]);
-  const [newWebsiteUrl, setNewWebsiteUrl] = useState("");
-  const [selectedWebsite, setSelectedWebsite] = useState(null);
+  const [websites, setWebsites] = useState<any[]>([]);
+  const [newWebsiteUrl, setNewWebsiteUrl] = useState<any>("");
+  const [selectedWebsite, setSelectedWebsite] = useState<any>(null);
   const [showAddForm, setShowAddForm] = useState(false);
   const { getToken } = useAuth();
   const [token, setToken] = useState("");
@@ -98,21 +98,21 @@ const WebsiteDashboard = () => {
   };
 
   // Start monitoring a website
-  // const handleStartMonitoring = (id) => {
-  //   setWebsites(websites.map(website => {
-  //     if (website.id === id) {
-  //       return { 
-  //         ...website, 
-  //         status: Math.random() > 0.2 ? 'up' : 'down',
-  //         responseTime: Math.random() * 2,
-  //         lastChecked: new Date().toISOString()
-  //       };
-  //     }
-  //     return website;
-  //   }));
-  // };
+  const handleStartMonitoring = (id : any) => {
+    setWebsites(websites.map(website => {
+      if (website.id === id) {
+        return { 
+          ...website, 
+          status: Math.random() > 0.2 ? 'up' : 'down',
+          responseTime: Math.random() * 2,
+          lastChecked: new Date().toISOString()
+        };
+      }
+      return website;
+    }));
+  };
 
-  console.log(websites.map(w => console.log((w.status[w.status.length-1]).timestamp)));
+  console.log(websites.map(w => console.log((w as any).status[(w as any).status.length-1].timestamp)));
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100">
@@ -203,7 +203,7 @@ const WebsiteDashboard = () => {
             <div className="flex justify-between items-start mb-2">
               <h3 className="text-lg font-medium">Monitored Websites</h3>
               <div className="bg-indigo-600/20 text-indigo-400 px-2 py-1 rounded-md text-sm font-medium">
-                {websites.filter(w => !w.disabled).length}
+                {websites.filter(w => !(w as any).disabled).length}
               </div>
             </div>
             <div className="text-3xl font-bold">
@@ -216,11 +216,11 @@ const WebsiteDashboard = () => {
             <div className="flex justify-between items-start mb-2">
               <h3 className="text-lg font-medium">Websites Online</h3>
               <div className="bg-green-600/20 text-green-400 px-2 py-1 rounded-md text-sm font-medium">
-                {Math.round(websites.filter(w => w.status[((w.status).length)-1].status === 'Good').length / websites.filter(w => w => w.status[((w.status).length)-1].status === 'Bad').length * 100 || 0)}%
+                {Math.round(websites.filter((w : any) => w.status[((w.status).length)-1].status === 'Good').length / websites.filter((w : any) => (w : any) => w.status[((w.status).length)-1].status === 'Bad').length * 100 || 0)}%
               </div>
             </div>
             <div className="text-3xl font-bold">
-              {websites.filter(w => w.status[((w.status).length)-1].status === 'Good').length}
+              {websites.filter((w : any) => w.status[((w.status).length)-1].status === 'Good').length}
               <span className="text-sm font-normal text-gray-400 ml-2">Websites</span>
             </div>
           </div>
@@ -229,11 +229,11 @@ const WebsiteDashboard = () => {
             <div className="flex justify-between items-start mb-2">
               <h3 className="text-lg font-medium">Websites Offline</h3>
               <div className="bg-red-600/20 text-red-400 px-2 py-1 rounded-md text-sm font-medium">
-                {Math.round(websites.filter(w => w.status[((w.status).length)-1].status === 'Bad').length / websites.filter(w => w => w.status[((w.status).length)-1].status !== 'Bad').length * 100 || 0)}%
+                {Math.round(websites.filter((w:any)=> w.status[((w.status).length)-1].status === 'Bad').length / websites.filter((w : any) => (w : any) => w.status[((w.status).length)-1].status !== 'Bad').length * 100 || 0)}%
               </div>
             </div>
             <div className="text-3xl font-bold">
-              {websites.filter(w => w.status[((w.status).length)-1].status === 'Bad').length}
+              {websites.filter((w : any) => w.status[((w.status).length)-1].status === 'Bad').length}
               <span className="text-sm font-normal text-gray-400 ml-2">Websites</span>
             </div>
           </div>
@@ -248,7 +248,7 @@ const WebsiteDashboard = () => {
               <span className="text-sm text-gray-400">{websites.length} Total</span>
             </div>
             <div className="divide-y divide-gray-700 max-h-96 overflow-y-auto">
-              {websites.map(website => (
+              {websites.map((website : any) => (
                 <div 
                   key={website.id} 
                   className={`p-4 flex items-center cursor-pointer hover:bg-gray-700 transition-colors ${selectedWebsite?.id === website.id ? 'bg-gray-700' : ''}`}
@@ -313,7 +313,7 @@ const WebsiteDashboard = () => {
                       </button>
                     ) : (
                       <button 
-                        onClick={() => handleStopMonitoring(selectedWebsite.id)}
+                        onClick={() => handleStartMonitoring(selectedWebsite.id)}
                         className="bg-gray-600 hover:bg-gray-700 px-3 py-1 rounded text-sm font-medium transition-colors"
                       >
                         Stop Monitoring
