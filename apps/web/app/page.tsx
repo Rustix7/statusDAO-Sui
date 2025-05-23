@@ -9,9 +9,7 @@ const Home = () => {
 
     return (
         <div className="bg-slate-950 text-gray-100 min-h-screen font-sans">
-            {/* Header */}
             <Navbar/>
-            {/* Hero Section */}
             <section className="relative pt-32 pb-20 px-4 overflow-hidden">
                 <div className="absolute inset-0 opacity-30">
                     <div className="absolute -right-40 -top-40 w-96 h-96 rounded-full bg-gradient-to-br from-cyan-500/20 to-teal-500/20 blur-3xl"></div>
@@ -26,7 +24,7 @@ const Home = () => {
                                 Know when your sites are <span className="bg-gradient-to-r from-cyan-400 to-teal-400 text-transparent bg-clip-text">down</span> before your users do
                             </h1>
                             <p className="text-gray-400 text-lg max-w-xl">
-                                StatusDAO monitors your websites in real-time through a decentralized network of nodes with WebSocket technology and transparent Ethereum payments.
+                                StatusDAO monitors your websites in real-time through a decentralized network of nodes with WebSocket technology and transparent SUI payments.
                             </p>
                             <div className="flex flex-col sm:flex-row gap-4 pt-4">
                                 <button className="bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white px-6 py-3 rounded-full transition font-medium flex items-center justify-center group" onClick={() => router.push('/dashboard')}>
@@ -44,7 +42,7 @@ const Home = () => {
                                 </div>
                                 <div className="flex items-center">
                                     <CheckCircleIcon size={18} className="text-teal-500 mr-2" />
-                                    <span>ETH Payments</span>
+                                    <span>SUI Payments</span>
                                 </div>
                                 <div className="flex items-center">
                                     <CheckCircleIcon size={18} className="text-teal-500 mr-2" />
@@ -104,7 +102,6 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* Features Section */}
             <section id="features" className="py-20 relative">
                 <div className="absolute inset-0 opacity-30">
                     <div className="absolute left-20 top-40 w-96 h-96 rounded-full bg-gradient-to-br from-cyan-500/20 to-teal-500/20 blur-3xl"></div>
@@ -132,12 +129,12 @@ const Home = () => {
                             {
                                 icon: <Shield size={24} />,
                                 title: "Transparent Payments",
-                                description: "All transactions are recorded on the Ethereum blockchain, ensuring full transparency and fairness."
+                                description: "All transactions are recorded on the SUI blockchain, ensuring full transparency and fairness."
                             },
                             {
                                 icon: <CreditCard size={24} />,
                                 title: "Pay-as-you-go",
-                                description: "Only pay for the monitoring you actually use, with flexible subscription options via ETH."
+                                description: "Only pay for the monitoring you actually use, with flexible subscription options via SUI."
                             },
                             {
                                 icon: <GlobeIcon size={24} />,
@@ -164,7 +161,6 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* How It Works */}
             <section id="how-it-works" className="py-20 bg-slate-900/50 relative">
                 <div className="absolute inset-0 opacity-30">
                     <div className="absolute right-20 top-40 w-96 h-96 rounded-full bg-gradient-to-bl from-cyan-500/20 to-teal-500/20 blur-3xl"></div>
@@ -210,54 +206,11 @@ const Home = () => {
                         ))}
                     </div>
 
-                    <div className="mt-16 border border-slate-800 bg-slate-900/80 rounded-2xl p-8 backdrop-blur-sm backdrop-filter">
-                        <h3 className="text-2xl font-bold mb-6">Technical Architecture</h3>
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-                            <div>
-                                <p className="text-gray-400 mb-4">
-                                    StatusDAO uses a hub-and-spoke model with WebSocket connections to ensure real-time monitoring:
-                                </p>
-                                <ul className="space-y-3 text-gray-400">
-                                    <li className="flex items-start">
-                                        <div className="text-teal-500 mr-3 mt-1"><CheckCircleIcon size={18} /></div>
-                                        <span>The central hub distributes monitoring tasks to connected nodes via WebSockets</span>
-                                    </li>
-                                    <li className="flex items-start">
-                                        <div className="text-teal-500 mr-3 mt-1"><CheckCircleIcon size={18} /></div>
-                                        <span>Nodes perform status checks and immediately report results back to the hub</span>
-                                    </li>
-                                    <li className="flex items-start">
-                                        <div className="text-teal-500 mr-3 mt-1"><CheckCircleIcon size={18} /></div>
-                                        <span>The hub aggregates results and updates status in real-time</span>
-                                    </li>
-                                    <li className="flex items-start">
-                                        <div className="text-teal-500 mr-3 mt-1"><CheckCircleIcon size={18} /></div>
-                                        <span>Ethereum smart contracts handle subscriptions and node payments transparently</span>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div className="relative">
-                                <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500/50 to-teal-500/50 rounded-xl blur-sm opacity-30"></div>
-                                <div className="bg-slate-900 p-6 rounded-xl relative border border-slate-800/50">
-                                    <div className="w-full h-64 flex items-center justify-center">
-                                        <div className="text-center">
-                                            <div className="text-cyan-400 mb-2">
-                                                {/* <CubeTransparent size={48} /> */}
-                                            </div>
-                                            <p className="text-sm text-gray-400">Architecture Diagram</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </section>
 
-            {/* Pricing */}
             <Pricing/>
 
-            {/* Become a Node */}
             <section id="nodes" className="py-20 bg-slate-900/50 relative">
                 <div className="absolute inset-0 opacity-30">
                     <div className="absolute right-20 bottom-20 w-96 h-96 rounded-full bg-gradient-to-br from-cyan-500/20 to-teal-500/20 blur-3xl"></div>
@@ -295,9 +248,9 @@ const Home = () => {
                             </div>
                             <div className="space-y-4">
                                 {[
-                                    { level: "Basic", availability: "99%", earnings: "0.02 ETH" },
-                                    { level: "Standard", availability: "99.5%", earnings: "0.05 ETH" },
-                                    { level: "Premium", availability: "99.9%", earnings: "0.1 ETH" }
+                                    { level: "Basic", availability: "99%", earnings: "20 SUI" },
+                                    { level: "Standard", availability: "99.5%", earnings: "50 SUI" },
+                                    { level: "Premium", availability: "99.9%", earnings: "100 SUI" }
                                 ].map((tier, index) => (
                                     <div key={index} className="bg-slate-800/50 rounded-xl p-4 flex justify-between items-center border border-slate-700/20">
                                         <div>

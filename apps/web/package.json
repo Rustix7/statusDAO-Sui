@@ -12,9 +12,11 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.12.6",
+    "@mysten/dapp-kit": "^0.16.3",
+    "@mysten/sui": "^1.29.1",
     "@repo/ui": "*",
     "@tailwindcss/postcss": "^4.0.14",
-    "@tanstack/react-query": "^5.71.0",
+    "@tanstack/react-query": "^5.76.1",
     "axios": "^1.8.4",
     "connectkit": "^1.8.2",
     "ethers": "^6.13.5",

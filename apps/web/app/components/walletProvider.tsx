@@ -1,31 +1,26 @@
 "use client"
-import { WagmiProvider, createConfig, http } from "wagmi";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ConnectKitProvider, getDefaultConfig } from "connectkit";
-import { eduChainTestnet } from "wagmi/chains";
-import React from "react";
 
-export const config = createConfig(
-  getDefaultConfig({
-    // Your dApps chains
-    chains: [eduChainTestnet],
-    transports: {
-      // RPC URL for each chain
-      [eduChainTestnet.id]: http(),
-    },
-    walletConnectProjectId: "123",
-    appName: "StatusDAO",
-  }),
-);
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { SuiClientProvider, WalletProvider } from '@mysten/dapp-kit';
+import { getFullnodeUrl } from '@mysten/sui/client';
+import '@mysten/dapp-kit/dist/index.css';
 
 const queryClient = new QueryClient();
 
+const networks = {
+	devnet: { url: getFullnodeUrl('devnet') },
+	mainnet: { url: getFullnodeUrl('mainnet') },
+};
+
+
 export const Web3Provider = ({ children } : {children : React.ReactNode}) => {
   return (
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
-        <ConnectKitProvider>{children}</ConnectKitProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
+    <QueryClientProvider client={queryClient}>
+      <SuiClientProvider networks={networks} defaultNetwork="devnet">
+        <WalletProvider>
+        {children}
+        </WalletProvider>
+      </SuiClientProvider>
+    </QueryClientProvider>
   );
 };

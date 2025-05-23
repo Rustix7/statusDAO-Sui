@@ -1,20 +1,17 @@
-import { useWaitForTransactionReceipt, useWriteContract } from "wagmi"
-import { contractABI, contractAddress } from "../utils/contractDetails"
-import { parseEther } from "viem"
-import axios from "axios"
-import { useEffect, useState, useCallback } from "react"
-import { getEthersProvider } from "./etherProvider"
-import { config } from "./walletProvider"
-import { ethers } from "ethers"
-import { useEthersSigner } from "./etherSigner"
+import { SubscriptionStoreId , ContractId } from "../utils/contractDetails"
+import { useState, useCallback } from "react"
 import { useAuth } from "@clerk/nextjs"
+import { Transaction } from '@mysten/sui/transactions';
+import { useSignAndExecuteTransaction, useSuiClient } from "@mysten/dapp-kit"
+import axios from "axios";
 
-const PayButton = ({ plan }: { plan: any }) => {
+const PayButton = ({ plan , index}: { plan: any , index: number}) => {
     const [isLoading, setIsLoading] = useState(false)
-    const [isPurchased, setIsPurchased] = useState(false)
-    // const provider = getEthersProvider(config);
     const { getToken } = useAuth();
-    const signer = useEthersSigner()
+    const suiClient = useSuiClient();
+    const [isPurchased, setIsPurchased] = useState(false);
+
+    const {mutateAsync : signAndExecuteTransaction , isSuccess , isPending} = useSignAndExecuteTransaction();
 
     const getFreshToken = useCallback(async () => {
         try {
@@ -37,15 +34,29 @@ const PayButton = ({ plan }: { plan: any }) => {
             if (!freshToken) {
                 throw new Error("Failed to obtain authentication token");
             }
-            const contract = new ethers.Contract(contractAddress, contractABI, signer)!;
-            const result = await contract.subscribe!(parseEther(String(plan.price)), { value: parseEther(String(plan.price)) });
-            console.log(result.hash);
-            const hash = result.hash;
+
+            let id = 0;
+            const tx = new Transaction();
+            const [payment] = tx.splitCoins(tx.gas,[tx.pure.u64(plan.price * (10**9))]);
+            tx.moveCall({
+                target : `${ContractId}::uptime::buy_subscription`,
+                arguments : [
+                    tx.object(SubscriptionStoreId),
+                    tx.pure.u64(id),
+                    payment
+                ]
+            })
+
+            const res = await signAndExecuteTransaction({
+                transaction : tx
+            })
+
+            console.log(res.digest);
 
             const result2 = await axios.post('http://localhost:3001/api/v1/purchaseSubscription',
                 {
-                    subscriptionId: plan.id,
-                    transactionHash: hash
+                    subscriptionId: String(index),
+                    transactionHash: "random123"
                 },
                 {
                     headers: {
@@ -64,33 +75,29 @@ const PayButton = ({ plan }: { plan: any }) => {
         }
     }
 
-    if (isLoading) {
+    if(isPurchased && isSuccess) {
+        return <div className={`w-full py-3 rounded-full transition text-center ${plan.popular ? 'bg-gradient-to-r from-cyan-500 to-teal-500 text-white' : 'bg-slate-800 text-white border border-slate-700'
+        }`}>
+        Successfully Purchased
+    </div>
+    }
+    if(isLoading || isPending){
+        return <div className={`w-full py-3 rounded-full transition text-center ${plan.popular ? 'bg-gradient-to-r from-cyan-500 to-teal-500 text-white' : 'bg-slate-800 text-white border border-slate-700'
+        }`}>
+        Loading...
+    </div>
+    }
+    else {
         return (
-            <div className={`w-full py-3 rounded-full transition text-center ${plan.popular ? 'bg-gradient-to-r from-cyan-500 to-teal-500 text-white' : 'bg-slate-800 text-white border border-slate-700'
-                }`}>
-                Loading...
-            </div>
+            <button
+                className={`w-full py-3 rounded-full transition ${plan.popular ? 'bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white' : 'bg-slate-800 hover:bg-slate-700 text-white border border-slate-700'
+                    }`}
+                onClick={subscribeHandler}
+            >
+                Subscribe with SUI
+            </button>
         )
     }
-
-    if (isPurchased) {
-        return (
-            <div className={`w-full py-3 rounded-full transition text-center ${plan.popular ? 'bg-gradient-to-r from-cyan-500 to-teal-500 text-white' : 'bg-slate-800 text-white border border-slate-700'
-                }`}>
-                Successfully purchased
-            </div>
-        )
-    }
-
-    return (
-        <button
-            className={`w-full py-3 rounded-full transition ${plan.popular ? 'bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-600 hover:to-teal-600 text-white' : 'bg-slate-800 hover:bg-slate-700 text-white border border-slate-700'
-                }`}
-            onClick={subscribeHandler}
-        >
-            Subscribe with ETH
-        </button>
-    )
 }
 
 export default PayButton

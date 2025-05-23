@@ -2,8 +2,7 @@
 import {OutgoingMessage, SignupOutgoingMessage,ValidateOutgoingMessage} from "common/types"
 import { randomUUIDv7 } from "bun";
 import 'dotenv';
-import {ethers} from "ethers";
-import { Wallet } from "ethers";
+import { Ed25519Keypair } from "@mysten/sui/keypairs/ed25519";
 
 require('dotenv').config();
 let validatorId : string | null = null;
@@ -11,7 +10,8 @@ const Callbacks : {[callbackId : string] : (data : SignupOutgoingMessage) => voi
 
 const main = async() => {
 
-    const wallet = new ethers.Wallet(process.env.PRIVATE_KEY!);
+    // const wallet = new ethers.Wallet(process.env.PRIVATE_KEY!);
+    const wallet = Ed25519Keypair.fromSecretKey(process.env.SECRET_KEY!);
 
     const ws = new WebSocket('ws://localhost:8080');
 
@@ -32,14 +32,16 @@ const main = async() => {
         Callbacks[callbackId] = (data : SignupOutgoingMessage) => {
             validatorId = data.validatorId;
         }
-        const signedMessage = await wallet.signMessage(`Signed message for ${callbackId}, ${wallet.address}`);
+
+        const message = new TextEncoder().encode(`Signed message for ${callbackId}, ${wallet.getPublicKey().toSuiAddress()}`);
+        const {signature : signedMessage} = await wallet.signPersonalMessage(message);
 
         if(signedMessage) {
             ws.send(JSON.stringify({
                 type : 'signup',
                 data : {
                     callbackId : callbackId,
-                    publicKey : wallet.address,
+                    publicKey : wallet.getPublicKey().toSuiAddress(),
                     ip : '127.0.0.1',
                     signedMessage : signedMessage
                 }
@@ -49,10 +51,11 @@ const main = async() => {
     }
 }
 
-const validateHandler = async(data : ValidateOutgoingMessage , wallet : Wallet , ws : WebSocket) => {
+const validateHandler = async(data : ValidateOutgoingMessage , wallet : any , ws : WebSocket) => {
     console.log(`Validating ${data.url}`);
     const startTime = Date.now();
-    const signature = await wallet.signMessage(`Replying to ${data.callbackId}`);
+    const message = new TextEncoder().encode(`Replying to ${data.callbackId}`);
+    const { signature } = await wallet.signPersonalMessage(message);
 
     try {
         const response = await fetch(data.url);

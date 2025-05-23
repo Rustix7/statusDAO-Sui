@@ -1,10 +1,9 @@
 "use client"
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
-import { ConnectKitButton } from "connectkit";
+import { ConnectButton } from "@mysten/dapp-kit";
 import { Menu, X, Zap } from "lucide-react";
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react";
-
 
 const Navbar = () => {
 
@@ -41,7 +40,7 @@ const Navbar = () => {
 
             <div className="justify-between flex flex-row items-center gap-x-10">
                 <div>
-                    <ConnectKitButton />
+                    <ConnectButton/>
                 </div>
                 <div className='flex items-center'>
                     <SignedOut>

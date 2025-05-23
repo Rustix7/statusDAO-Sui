@@ -2,7 +2,8 @@ import { randomUUIDv7, type ServerWebSocket } from "bun";
 import type { IncomingMessage, SignupIncomingMessage } from "common/types";
 import { prisma } from "db/schema";
 import { sendEmail } from "./email";
-import {ethers} from "ethers";
+import { verifyPersonalMessageSignature } from "@mysten/sui/verify";
+// import {ethers} from "ethers";
 
 const availableValidators: { validatorId: string, socket: ServerWebSocket<unknown>, publicKey: string }[] = [];
 
@@ -23,8 +24,9 @@ Bun.serve({
             console.log("data is : " , data);
             if (data.type === 'signup') {
                 console.log("signup buddy")
+                const message = new TextEncoder().encode(`Signed message for ${data.data.callbackId}, ${data.data.publicKey}`);
                 const verified = await verifyMessage(
-                    `Signed message for ${data.data.callbackId}, ${data.data.publicKey}`,
+                    message,
                     data.data.publicKey,
                     data.data.signedMessage
                 );
@@ -70,7 +72,6 @@ async function signupHandler(ws: ServerWebSocket<unknown>, { ip, publicKey, sign
 
     console.log("hi there creating in the db");
     
-    //TODO: Given the ip, return the location
     const validator = await prisma.node.create({
         data: {
             ip,
@@ -94,10 +95,13 @@ async function signupHandler(ws: ServerWebSocket<unknown>, { ip, publicKey, sign
     });
 }
 
-async function verifyMessage(message: string, publicKey: string, signature: string) {
+async function verifyMessage(message: Uint8Array, publicKey: string, signature: string) {
 
-    const derivedAddress = ethers.verifyMessage(message,signature);
-    return derivedAddress.toLowerCase() === publicKey.toLowerCase();
+    const result = await verifyPersonalMessageSignature(message, signature, {
+        address: publicKey,
+    });;
+
+    return result;
 }
 
 setInterval(async () => {
@@ -126,8 +130,9 @@ setInterval(async () => {
             CALLBACKS[callbackId] = async (data: IncomingMessage) => {
                 if (data.type === 'validate') {
                     const { validatorId, status, latency, signedMessage } = data.data;
+                    const message = new TextEncoder().encode(`Replying to ${callbackId}`);
                     const verified = await verifyMessage(
-                        `Replying to ${callbackId}`,
+                        message,
                         validator.publicKey,
                         signedMessage
                     );

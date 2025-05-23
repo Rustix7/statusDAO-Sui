@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import {
   GlobeIcon, XCircleIcon, CheckCircleIcon,
   AlertCircleIcon, PhoneIcon, MailIcon, PlusIcon,
-  Trash2Icon, RefreshCwIcon, BarChart2Icon, Zap,
+  Trash2Icon, RefreshCwIcon, BarChart2Icon,
   ClockIcon,
   ChevronUpIcon,
   ChevronDownIcon

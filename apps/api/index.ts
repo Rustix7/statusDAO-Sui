@@ -109,9 +109,6 @@ app.get('/api/v1/userPurchases',authMiddleware, async(req,res) => {
         const result = await prisma.purchases.findMany({
             where : {
                 userId
-            },
-            include : {
-                subscription : true
             }
         })
 
@@ -125,25 +122,8 @@ app.get('/api/v1/userPurchases',authMiddleware, async(req,res) => {
             msg : "Internal Error",
         })
     }
-
-
 })
 
-app.get('/api/v1/getSubscriptions',async(req,res) => {
-    
-    try{
-        const result = await prisma.subscriptions.findMany({});
-
-        res.status(200).json({
-            result
-        })
-    }
-    catch(e){
-        res.status(501).json({
-            msg : "Internal Error"
-        })
-    }
-})
 
 app.get('/api/v1/websites',authMiddleware,async(req,res) => {
 
@@ -216,8 +196,11 @@ app.post('/api/v1/purchaseSubscription',authMiddleware,async(req,res) => {
     const userId = req.userId!;
     const {subscriptionId , transactionHash} = req.body
 
+    console.log(typeof(subscriptionId));
+    console.log(transactionHash);
+    console.log(userId);
     try{
-
+        console.log("trying prisma reaching")
         const result = await prisma.purchases.create({
             data : {
                 userId,

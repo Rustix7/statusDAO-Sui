@@ -10,6 +10,7 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@mysten/sui": "^1.29.1",
     "dotenv": "^16.4.7",
     "ethers": "^6.13.5"
   }

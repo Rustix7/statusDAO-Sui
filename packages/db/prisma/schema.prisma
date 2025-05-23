@@ -45,18 +45,10 @@ model WebsiteStatus {
   node      Node     @relation(fields: [nodeId], references: [id])
 }
 
-model Subscriptions {
-  id              String      @id @default(uuid())
-  price           Int
-  duration        Int
-  maxSitesAllowed Int
-  purchases       Purchases[]
-}
 
 model Purchases {
   id             String        @id @default(uuid())
   subscriptionId String
-  subscription   Subscriptions @relation(fields: [subscriptionId], references: [id])
   userId         String
   time           DateTime      @default(now())
   transactionHash String      

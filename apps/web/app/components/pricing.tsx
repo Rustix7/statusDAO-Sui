@@ -1,39 +1,30 @@
 // "use client"
 import { CheckCircleIcon } from "lucide-react"
 import PayButton from "./PayButton";
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { SubscriptionStoreId } from "../utils/contractDetails";
+import { useSuiClientQuery } from "@mysten/dapp-kit";
 
 type SubscriptionData = {
-    id: string,
     price: number,
-    duration: number,
+    validity: number,
     maxSitesAllowed: number,
-    purchases: any
 }
 
 const Pricing = () => {
-    const [data, setData] = useState<SubscriptionData[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchSubscriptions = async() => {
-            try {
-                setIsLoading(true);
-                const response = await axios.get('http://localhost:3001/api/v1/getSubscriptions');
-                setData(response.data.result);
-                console.log(response.data);
-            } catch (error) {
-                console.error("Failed to fetch subscriptions:", error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
+    const {data , isPending : fetchPending, isSuccess : fetchSuccess} = useSuiClientQuery("getObject",{
+        id : SubscriptionStoreId,
+        options : {
+          showContent : true,
+          showOwner : true
+        }
+      });
 
-        fetchSubscriptions();
-    }, []);
+    // console.log(data?.data?.content);
+    // console.log(data?.data?.content.fields.subscriptions);
 
-    if (isLoading || data.length < 3) {
+
+    if (fetchPending /*|| data.length < 3*/) {
         return <div className="flex justify-center items-center py-20">
             <div className="animate-spin mr-2">
                 <CheckCircleIcon size={24} />
@@ -42,16 +33,15 @@ const Pricing = () => {
         </div>;
     }
 
-    // Create pricing plans only when data is available
     const pricingPlans = [
         {
-            id : `${data[0]?.id}`,
+            id : `0`,
             name: "Basic",
-            price: `${(Number(data[0]?.price) / (10 ** 3)).toFixed(2)}`,
+            price: `${(Number(data?.data?.content.fields.subscriptions[0].fields.price) / (10 ** 8)).toFixed(2)}`,
             period: "per month",
             description: "Perfect for personal websites and small projects",
             features: [
-                `Monitor up to ${data[0]?.maxSitesAllowed} websites`,
+                `Monitor up to ${data?.data?.content.fields.subscriptions[0]?.fields.maxSitesAllowed} websites`,
                 "Checks every 60 seconds",
                 "10 geographic regions",
                 "24 hour data retention",
@@ -59,14 +49,14 @@ const Pricing = () => {
             ]
         },
         {
-            id : `${data[1]?.id}`,
+            id : `1`,
             name: "Pro",
-            price: `${(Number(data[1]?.price) / (10 ** 3)).toFixed(2)}`,
+            price: `${(Number(data?.data?.content.fields.subscriptions[1]?.fields.price) / (10 ** 8)).toFixed(2)}`,
             period: "per month",
             description: "Ideal for businesses with multiple websites",
             popular: true,
             features: [
-                `Monitor up to ${data[1]?.maxSitesAllowed} websites`,
+                `Monitor up to ${data?.data?.content.fields.subscriptions[1]?.fields.maxSitesAllowed} websites`,
                 "Checks every 30 seconds",
                 "7 geographic regions",
                 "7 day data retention",
@@ -75,13 +65,13 @@ const Pricing = () => {
             ]
         },
         {
-            id : `${data[2]?.id}`,
+            id : `2`,
             name: "Enterprise",
-            price: `${(Number(data[2]?.price) / (10 ** 3)).toFixed(2)}`,
+            price: `${(Number(data?.data?.content.fields.subscriptions[2]?.fields.price) / (10 ** 8)).toFixed(2)}`,
             period: "per month",
             description: "For large organizations with critical websites",
             features: [
-                `Monitor up to ${data[2]?.maxSitesAllowed} websites`,
+                `Monitor up to ${data?.data?.content.fields.subscriptions[2]?.fields.maxSitesAllowed} websites`,
                 "Checks every 15 seconds",
                 "12 geographic regions",
                 "30 day data retention",
@@ -102,7 +92,7 @@ const Pricing = () => {
                 <div className="text-center max-w-3xl mx-auto mb-16">
                     <div className="inline-block px-4 py-1 text-xs font-semibold tracking-wider bg-teal-900/30 text-teal-400 rounded-full mb-4">PRICING</div>
                     <h2 className="text-3xl md:text-4xl font-bold mb-4 tracking-tight">Simple, Transparent Pricing</h2>
-                    <p className="text-gray-400">Pay with ETH for only what you use, with no hidden fees or long-term commitments.</p>
+                    <p className="text-gray-400">Pay with SUI for only what you use, with no hidden fees or long-term commitments.</p>
                 </div>
         
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -118,7 +108,7 @@ const Pricing = () => {
                                 <div className="p-8">
                                     <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
                                     <div className="mb-4">
-                                        <span className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-teal-400 text-transparent bg-clip-text">{plan.price} EDU</span>
+                                        <span className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-teal-400 text-transparent bg-clip-text">{plan.price} SUI</span>
                                         <span className="text-gray-400 ml-2">{plan.period}</span>
                                     </div>
                                     <p className="text-gray-400 mb-6">{plan.description}</p>
@@ -132,7 +122,7 @@ const Pricing = () => {
                                     </ul>
                                 </div>
                                 <div className="mt-auto p-8 pt-0">
-                                    <PayButton plan={plan}/>
+                                    <PayButton plan={plan} index = {index}/>
                                 </div>
                             </div>
                         </div>
